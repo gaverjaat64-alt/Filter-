@@ -179,7 +179,7 @@ async def plan_command(client, message):
             ])
         
         buttons.append([InlineKeyboardButton('• ʀᴇꜰᴇʀ ꜰʀɪᴇɴᴅꜱ', callback_data='reffff'), InlineKeyboardButton('ꜰʀᴇᴇ ᴛʀɪᴀʟ •', callback_data='free')])
-        buttons.append([InlineKeyboardButton('🚫 ᴄʟᴏꜱᴇ 🚫', callback_data='close_data')])
+        buttons.append([InlineKeyboardButton('🚫 ᴄʟᴏꜱᴇ 🚫', callback_data='close_data', style=enums.ButtonStyle.DANGER)])
 
         # Reply with Photo
         msg = await message.reply_photo(
@@ -244,7 +244,7 @@ async def back_to_plans(client, query: CallbackQuery):
             buttons.append([InlineKeyboardButton(f"💎 {name} - ₹{price}", callback_data=f"pay_{price}_{name}")])
         
         buttons.append([InlineKeyboardButton('• ʀᴇꜰᴇʀ ꜰʀɪᴇɴᴅꜱ', callback_data='reffff'), InlineKeyboardButton('ꜰʀᴇᴇ ᴛʀɪᴀʟ •', callback_data='free')])
-        buttons.append([InlineKeyboardButton('🚫 ᴄʟᴏꜱᴇ 🚫', callback_data='close_data')])
+        buttons.append([InlineKeyboardButton('🚫 ᴄʟᴏꜱᴇ 🚫', callback_data='close_data', style=enums.ButtonStyle.DANGER)])
 
         await query.edit_message_media(
             media=InputMediaPhoto(media=SUBSCRIPTION, caption=script.BPREMIUM_TXT),
