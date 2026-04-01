@@ -306,7 +306,7 @@ async def start(client, message):
                     InlineKeyboardButton(text="♻️ ᴠᴇʀɪꜰʏ ♻️", url=verify),
                     InlineKeyboardButton(text="⁉️ ʜᴏᴡ ᴛᴏ ᴠᴇʀɪꜰʏ ⁉️", url=howtodownload)
                 ],[
-                    InlineKeyboardButton("BUY PREMIUM 🎟️", url=f"https://t.me/{temp.U_NAME}?start=premium", style=enums.ButtonStyle.SUCCESS)
+                    InlineKeyboardButton("BUY PREMIUM 🎟️", url=f"https://t.me/{temp.U_NAME}?start=premium")
                 ]]
                 reply_markup=InlineKeyboardMarkup(buttons)
                 if await db.user_verified(user_id): 
