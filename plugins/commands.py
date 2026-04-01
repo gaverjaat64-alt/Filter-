@@ -203,19 +203,30 @@ async def start(client, message):
         return
         
     if len(message.command) == 2 and message.command[1] in ["premium"]:
-        buttons = [[
-                    InlineKeyboardButton('📲 ꜱᴇɴᴅ ᴘᴀʏᴍᴇɴᴛ ꜱᴄʀᴇᴇɴꜱʜᴏᴛ', url=OWNER_LNK)
-                  ],[
-                    InlineKeyboardButton('❌ ᴄʟᴏꜱᴇ ❌', callback_data='close_data')
-                  ]]
-        reply_markup = InlineKeyboardMarkup(buttons)
-        await message.reply_photo(
-            photo=(SUBSCRIPTION),
-            caption=script.PREPLANS_TXT.format(message.from_user.mention, OWNER_UPI_ID, QR_CODE),
-            reply_markup=reply_markup,
-            parse_mode=enums.ParseMode.HTML
-        )
-        return  
+        try:
+            buttons = []
+            for price, name in PREMIUM_PLANS.items():
+                buttons.append([
+                    InlineKeyboardButton(f"💎 {name} - ₹{price}", callback_data=f"pay_{price}_{name}")
+                ])
+            
+            # Additional Buttons
+            buttons.append([InlineKeyboardButton('📲 ꜱᴇɴᴅ ᴘᴀʏᴍᴇɴᴛ ꜱᴄʀᴇᴇɴꜱʜᴏᴛ', url=OWNER_LNK)])
+            buttons.append([InlineKeyboardButton('❌ ᴄʟᴏꜱᴇ ❌', callback_data='close_data')])
+
+            # Photo ke saath reply bhejna
+            await message.reply_photo(
+                photo=SUBSCRIPTION,
+                # Caption mein mention, UPI aur QR link automatic chala jayega
+                caption=script.PREPLANS_TXT.format(message.from_user.mention, OWNER_UPI_ID, QR_CODE),
+                reply_markup=InlineKeyboardMarkup(buttons),
+                parse_mode=enums.ParseMode.HTML
+            )
+            return
+
+        except Exception as e:
+            print(f"Error in premium command: {e}")
+
     
     if len(message.command) == 2 and message.command[1].startswith('getfile'):
         movies = message.command[1].split("-", 1)[1] 
