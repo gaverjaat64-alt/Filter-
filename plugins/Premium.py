@@ -60,7 +60,7 @@ async def myplan(client, message):
                 photo=SUBSCRIPTION, 
                 caption=caption,
                 reply_markup=InlineKeyboardMarkup(
-                    [[InlineKeyboardButton("🔥 ᴇxᴛᴇɴᴅ ᴘʟᴀɴ", callback_data="premium_back)]]
+                    [[InlineKeyboardButton("🔥 ᴇxᴛᴇɴᴅ ᴘʟᴀɴ", callback_data="premium_back")]]
                 )
             )
         else:
