@@ -212,7 +212,7 @@ async def start(client, message):
             
             # Additional Buttons
             buttons.append([InlineKeyboardButton('📲 ꜱᴇɴᴅ ᴘᴀʏᴍᴇɴᴛ ꜱᴄʀᴇᴇɴꜱʜᴏᴛ', url=OWNER_LNK)])
-            buttons.append([InlineKeyboardButton('❌ ᴄʟᴏꜱᴇ ❌', callback_data='close_data')])
+            buttons.append([InlineKeyboardButton('❌ ᴄʟᴏꜱᴇ ❌', callback_data='close_data', style=enums.ButtonStyle.DANGER)])
 
             # Photo ke saath reply bhejna
             await message.reply_photo(
