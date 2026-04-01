@@ -164,104 +164,90 @@ async def premium_user(client, message):
         await message.reply_document('usersplan.txt', caption="Paid Users:")
 
 
-@Client.on_message(filters.command("plan"))
-async def plan(client, message):
-    user_id = message.from_user.id
-    users = message.from_user.mention
-    log_message = (
-        f"<b><u>🚫 ᴛʜɪs ᴜsᴇʀs ᴛʀʏ ᴛᴏ ᴄʜᴇᴄᴋ /plan</u> {temp.B_LINK}\n\n"
-        f"- ɪᴅ - `{user_id}`\n- ɴᴀᴍᴇ - {users}</b>")
-    btn = [[
-            InlineKeyboardButton('• ʙᴜʏ ᴘʀᴇᴍɪᴜᴍ •', callback_data='buy_info'),
-        ],[
-            InlineKeyboardButton('• ʀᴇꜰᴇʀ ꜰʀɪᴇɴᴅꜱ', callback_data='reffff'),
-            InlineKeyboardButton('ꜰʀᴇᴇ ᴛʀɪᴀʟ •', callback_data='free')
-        ],[
-            InlineKeyboardButton('🚫 ᴄʟᴏꜱᴇ 🚫', callback_data='close_data')
-        ]]
-    msg = await message.reply_photo(
-        photo="https://graph.org/file/86da2027469565b5873d6.jpg",
-        caption=script.BPREMIUM_TXT,
-        reply_markup=InlineKeyboardMarkup(btn)
-    )
-    await client.send_message(PREMIUM_LOGS, log_message)
-    await asyncio.sleep(300)
-    await msg.delete()
-    await message.delete()
-
-
-# Telegram Star Payment Method 👇
-# Credit - @BeingXAnonymous
-
-@Client.on_callback_query(filters.regex(r"buy_\d+"))
-async def premium_button(client, callback_query: CallbackQuery):
+@Client.on_message(filters.command("plan") & filters.private)
+async def plan_command(client, message):
     try:
-        amount = int(callback_query.data.split("_")[1])
-        if amount in STAR_PREMIUM_PLANS:
-            try:
-                buttons = [[	
-                    InlineKeyboardButton("ᴄᴀɴᴄᴇʟ 🚫", callback_data="close_data"),		    				
-                ]]
-                reply_markup = InlineKeyboardMarkup(buttons)
-                await client.send_invoice(
-                    chat_id=callback_query.message.chat.id,
-                    title="Premium Subscription",
-                    description=f"Pay {amount} Star And Get Premium For {STAR_PREMIUM_PLANS[amount]}",
-                    payload=f"dreamxpremium_{amount}",
-                    currency="XTR",
-                    prices=[
-                        LabeledPrice(
-                            label="Premium Subscription", 
-                            amount=amount
-                        ) 
-                    ],
-                    reply_markup=reply_markup
-                )
-                await callback_query.answer()
-            except Exception as e:
-                print(f"Error sending invoice: {e}")
-                await callback_query.answer("🚫 Error Processing Your Payment. Try again.", show_alert=True)
-        else:
-            await callback_query.answer("⚠️ Invalid Premium Package.", show_alert=True)
-    except Exception as e:
-        print(f"Error In buy_ - {e}")
- 
-@Client.on_pre_checkout_query()
-async def pre_checkout_handler(client, query: PreCheckoutQuery):
-    try:
-        if query.payload.startswith("dreamxpremium_"):
-            await query.answer(success=True)
-        else:
-            await query.answer(success=False, error_message="⚠️ Invalid Purchase Type.", show_alert=True)
-    except Exception as e:
-        print(f"Pre-checkout error: {e}")
-        await query.answer(success=False, error_message="🚫 Unexpected Error Occurred." , show_alert=True)
-
-@Client.on_message(filters.successful_payment)
-async def successful_premium_payment(client, message):
-    try:
-        amount = int(message.successful_payment.total_amount)
         user_id = message.from_user.id
-        time_zone = datetime.datetime.now(pytz.timezone("Asia/Kolkata"))
-        current_time = time_zone.strftime("%d-%m-%Y | %I:%M:%S %p") 
-        if amount in STAR_PREMIUM_PLANS:
-            time = STAR_PREMIUM_PLANS[amount]
-            seconds = await get_seconds(time)
-            if seconds > 0:
-                expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=seconds)
-                user_data = {"id": user_id, "expiry_time": expiry_time}
-                await db.update_user(user_data)
-                data = await db.get_user(user_id)
-                expiry = data.get("expiry_time")
-                expiry_str_in_ist = expiry.astimezone(pytz.timezone("Asia/Kolkata")).strftime("%d-%m-%Y | %I:%M:%S %p")    
-                await message.reply(text=f"Thankyou For Purchasing Premium Service Using Star ✅\n\nSubscribtion Time - {time}\nExpire In - {expiry_str_in_ist}", disable_web_page_preview=True)                
-                await client.send_message(PREMIUM_LOGS, text=f"#Purchase_Premium_With_Start\n\n👤 ᴜꜱᴇʀ - {message.user.mention}\n\n⚡ ᴜꜱᴇʀ ɪᴅ - <code>{user_id}</code>\n\n🚫 ꜱᴛᴀʀ ᴘᴀʏ - {amount}⭐\n\n⏰ ᴘʀᴇᴍɪᴜᴍ ᴀᴄᴄᴇꜱꜱ - {time}\n\n⌛️ ᴊᴏɪɴɪɴɢ ᴅᴀᴛᴇ - {current_time}\n\n⌛️ ᴇxᴘɪʀʏ ᴅᴀᴛᴇ - {expiry_str_in_ist}", disable_web_page_preview=True)
-            else:
-                await message.reply("⚠️ Invalid Premium Time.")
-        else:
-            await message.reply("⚠️ Invalid Premium Package.")
+        user_mention = message.from_user.mention
+        
+        # Dynamic Buttons Generator
+        buttons = []
+        for price, name in PREMIUM_PLANS.items():
+            buttons.append([
+                InlineKeyboardButton(f"💎 {name} - ₹{price}", callback_data=f"pay_{price}_{name}")
+            ])
+        
+        buttons.append([InlineKeyboardButton('• ʀᴇꜰᴇʀ ꜰʀɪᴇɴᴅꜱ', callback_data='reffff'), InlineKeyboardButton('ꜰʀᴇᴇ ᴛʀɪᴀʟ •', callback_data='free')])
+        buttons.append([InlineKeyboardButton('🚫 ᴄʟᴏꜱᴇ 🚫', callback_data='close_data')])
+
+        # Reply with Photo
+        msg = await message.reply_photo(
+            photo=SUBSCRIPTION,
+            caption=script.BPREMIUM_TXT,
+            reply_markup=InlineKeyboardMarkup(buttons)
+        )
+
+        # Admin Logs
+        log_txt = f"<b>🚫 ᴜsᴇʀ ᴄʜᴇᴄᴋᴇᴅ /plan</b>\n\n- ɪᴅ: `{user_id}`\n- ɴᴀᴍᴇ: {user_mention}"
+        await client.send_message(PREMIUM_LOGS, log_txt)
+
+        # Auto-delete after 5 mins
+        await asyncio.sleep(300)
+        try:
+            await msg.delete()
+            await message.delete()
+        except:
+            pass
+            
     except Exception as e:
-        print(f"Error Processing Premium Payment: {e}")
-        await message.reply("✅ Thank You For Your Payment! (Error Logging Details)")
+        logging.error(f"Error in plan command: {e}")
 
+# --- 2. PAYMENT SELECTION (EDIT MESSAGE) ---
+@Client.on_callback_query(filters.regex(r"pay_\d+"))
+async def payment_selection(client, query: CallbackQuery):
+    try:
+        # Extract Price and Plan Name from callback
+        data = query.data.split("_")
+        price = data[1]
+        plan_name = data[2]
 
+        # Payment Buttons
+        btns = [
+            [InlineKeyboardButton("📸 sᴇɴᴅ ᴘᴀʏᴍᴇɴᴛ sᴄʀᴇᴇɴsʜᴏᴛ", url=OWNER_LNK)],
+            [InlineKeyboardButton("« ʙᴀᴄᴋ ᴛᴏ ᴘʟᴀɴs", callback_data="premium_back")]
+        ]
+
+        payment_caption = (
+            f"✅ <b>ᴘʟᴀɴ sᴇʟᴇᴄᴛᴇᴅ: {plan_name}</b>\n"
+            f"💰 <b>ᴘᴀʏᴀʙʟᴇ ᴀᴍᴏᴜɴᴛ: ₹{price}</b>\n\n"
+            f"Sᴄᴀɴ QR ᴏʀ Pᴀʏ ᴛᴏ: <code>{OWNER_UPI_ID}</code>\n\n"
+            "🏁 <b>Iᴍᴘᴏʀᴛᴀɴᴛ:</b> Payment karne ke baad screenshot niche button par click karke Admin ko bhejein."
+        )
+
+        # Edit Current Message with QR and Details
+        await query.edit_message_media(
+            media=InputMediaPhoto(media=PAYMENT_QR, caption=payment_caption),
+            reply_markup=InlineKeyboardMarkup(btns)
+        )
+        await query.answer(f"Selected: ₹{price}", show_alert=False)
+
+    except Exception as e:
+        logging.error(f"Error in payment selection: {e}")
+
+# --- 3. BACK TO PLANS (EDIT BACK) ---
+@Client.on_callback_query(filters.regex("premium_back"))
+async def back_to_plans(client, query: CallbackQuery):
+    try:
+        buttons = []
+        for price, name in PREMIUM_PLANS.items():
+            buttons.append([InlineKeyboardButton(f"💎 {name} - ₹{price}", callback_data=f"pay_{price}_{name}")])
+        
+        buttons.append([InlineKeyboardButton('• ʀᴇꜰᴇʀ ꜰʀɪᴇɴᴅꜱ', callback_data='reffff'), InlineKeyboardButton('ꜰʀᴇᴇ ᴛʀɪᴀʟ •', callback_data='free')])
+        buttons.append([InlineKeyboardButton('🚫 ᴄʟᴏꜱᴇ 🚫', callback_data='close_data')])
+
+        await query.edit_message_media(
+            media=InputMediaPhoto(media=SUBSCRIPTION, caption=script.BPREMIUM_TXT),
+            reply_markup=InlineKeyboardMarkup(buttons)
+        )
+    except Exception as e:
+        logging.error(f"Error in back_to_plans: {e}")
