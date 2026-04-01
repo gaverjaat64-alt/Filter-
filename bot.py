@@ -26,7 +26,7 @@ import logging
 import logging.config
 
 logging.config.fileConfig('logging.conf')
-logging.getLogger().setLevel(logging.INFO)
+logging.getLogger().setLevel(logging.WARNING)
 logging.getLogger("pyrogram").setLevel(logging.ERROR)
 logging.getLogger("imdbpy").setLevel(logging.ERROR)
 logging.getLogger("aiohttp").setLevel(logging.ERROR)
@@ -38,7 +38,7 @@ ppath = "plugins/*.py"
 files = glob.glob(ppath)
 
 async def dreamxbotz_start():
-    print('\n\nInitalizing DreamxBotz')
+   # print('\n\nInitalizing DreamxBotz')
     await dreamxbotz.start()
     bot_info = await dreamxbotz.get_me()
     dreamxbotz.username = bot_info.username
@@ -73,8 +73,8 @@ async def dreamxbotz_start():
     dreamxbotz.username = '@' + me.username
     dreamxbotz.loop.create_task(check_expired_premium(dreamxbotz))
     logging.info(f"{me.first_name} with Pyrogram v{__version__} (Layer {layer}) started on {me.username}.")
-    logging.info(LOG_STR)
-    logging.info(script.LOGO)
+   # logging.info(LOG_STR)
+   # logging.info(script.LOGO)
     tz = pytz.timezone('Asia/Kolkata')
     today = date.today()
     now = datetime.now(tz)
