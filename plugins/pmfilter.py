@@ -219,7 +219,7 @@ async def next_page(bot, query):
             btn.append(
                 [
                     InlineKeyboardButton("⋞ ʙᴀᴄᴋ", callback_data=f"next_{req}_{key}_{off_set}"),
-                    InlineKeyboardButton(f"{math.ceil(int(offset)/10)+1}", callback_data="pages"),
+                    InlineKeyboardButton(f"{math.ceil(int(offset)/10)+1}", callback_data="pages", style=enums.ButtonStyle.PRIMARY),
                     InlineKeyboardButton("ɴᴇxᴛ ⋟", callback_data=f"next_{req}_{key}_{n_offset}")
                 ],
             )
@@ -244,7 +244,7 @@ async def next_page(bot, query):
                             InlineKeyboardButton(
                                 "⋞ ʙᴀᴄᴋ", callback_data=f"next_{req}_{key}_{off_set}"),
                             InlineKeyboardButton(
-                                f"{math.ceil(int(offset)/10)+1} / {math.ceil(total/10)}", callback_data="pages"),
+                                f"{math.ceil(int(offset)/10)+1} / {math.ceil(total/10)}", callback_data="pages", style=enums.ButtonStyle.PRIMARY),
                             InlineKeyboardButton(
                                 "ɴᴇxᴛ ⋟", callback_data=f"next_{req}_{key}_{n_offset}")
                         ],
@@ -268,7 +268,7 @@ async def next_page(bot, query):
                             InlineKeyboardButton(
                                 "⋞ ʙᴀᴄᴋ", callback_data=f"next_{req}_{key}_{off_set}"),
                             InlineKeyboardButton(
-                                f"{math.ceil(int(offset)/int(MAX_B_TN))+1} / {math.ceil(total/int(MAX_B_TN))}", callback_data="pages"),
+                                f"{math.ceil(int(offset)/int(MAX_B_TN))+1} / {math.ceil(total/int(MAX_B_TN))}", callback_data="pages", style=enums.ButtonStyle.PRIMARY),
                             InlineKeyboardButton(
                                 "ɴᴇxᴛ ⋟", callback_data=f"next_{req}_{key}_{n_offset}")
                         ],
@@ -295,7 +295,7 @@ async def next_page(bot, query):
                         InlineKeyboardButton(
                             "⋞ ʙᴀᴄᴋ", callback_data=f"next_{req}_{key}_{off_set}"),
                         InlineKeyboardButton(
-                            f"{math.ceil(int(offset)/10)+1} / {math.ceil(total/10)}", callback_data="pages"),
+                            f"{math.ceil(int(offset)/10)+1} / {math.ceil(total/10)}", callback_data="pages", style=enums.ButtonStyle.PRIMARY),
                         InlineKeyboardButton(
                             "ɴᴇxᴛ ⋟", callback_data=f"next_{req}_{key}_{n_offset}")
                     ],
@@ -504,7 +504,7 @@ async def filter_qualities_cb_handler(client: Client, query: CallbackQuery):
         btn.append(
 
             [InlineKeyboardButton(
-                text="↭ ɴᴏ ᴍᴏʀᴇ ᴘᴀɢᴇꜱ ᴀᴠᴀɪʟᴀʙʟᴇ ↭", callback_data="pages")]
+                text="↭ ɴᴏ ᴍᴏʀᴇ ᴘᴀɢᴇꜱ ᴀᴠᴀɪʟᴀʙʟᴇ ↭", callback_data="pages", style=enums.ButtonStyle.PRIMARY)]
         )
     if not settings["button"]:
         cur_time = datetime.now(pytz.timezone('Asia/Kolkata')).time()
@@ -1438,13 +1438,13 @@ async def cb_handler(client: Client, query: CallbackQuery):
 
     elif query.data == "start":
         buttons = [[
-                    InlineKeyboardButton('🔰 ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ 🔰', url=f'http://telegram.me/{temp.U_NAME}?startgroup=true')
+                    InlineKeyboardButton('🔰 ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ 🔰', url=f'http://telegram.me/{temp.U_NAME}?startgroup=true', style=enums.ButtonStyle.PRIMARY)
                 ],[
                     InlineKeyboardButton(' ʜᴇʟᴘ 📢', callback_data='help'),
                     InlineKeyboardButton(' ᴀʙᴏᴜᴛ 📖', callback_data='about')
                 ],[
                     InlineKeyboardButton('ᴛᴏᴘ sᴇᴀʀᴄʜɪɴɢ ⭐', callback_data="topsearch"),
-                     InlineKeyboardButton('ᴜᴘɢʀᴀᴅᴇ 🎟', callback_data="premium_back"),
+                     InlineKeyboardButton('ᴜᴘɢʀᴀᴅᴇ 🎟', callback_data="premium_back", style=enums.ButtonStyle.SUCCESS),
                 ]]
         reply_markup = InlineKeyboardMarkup(buttons)
         current_time = datetime.now(pytz.timezone(TIMEZONE))
@@ -1916,13 +1916,13 @@ async def auto_filter(client, msg, spoll=False):
 
         try:
             if settings.get('auto_delete'):
-                asyncio.create_task(_schedule_delete(sent, message, DELETE_TIME))
+                asyncio.create_task(_schedule_delete(message, DELETE_TIME))
         except KeyError:
             try:
                 await save_group_settings(message.chat.id, 'auto_delete', True)
             except Exception:
                 pass
-            asyncio.create_task(_schedule_delete(sent, message, DELETE_TIME))
+            asyncio.create_task(_schedule_delete(message, DELETE_TIME))
         return
 
     except Exception as e:
